@@ -1,0 +1,30 @@
+server:
+  port: 8002
+  servlet:
+    context-path: /gameSearch
+spring:
+  freemarker:
+    allow-request-override: false #不允许覆盖请求
+  　cache: false #禁用缓存
+  　check-template-location: true
+  　charset: UTF-8 #编码
+  　content-type: text/html
+  　expose-request-attributes: false
+  　expose-session-attributes: false
+  　expose-spring-macro-helpers: false
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss #json日期格式
+    joda-date-time-format: yyyy-MM-dd HH:mm:ss #反序列化日期格式
+    time-zone: GMT+8 #时区（不设置会少8小时）
+  resources:
+    #不为静态资源建立映射
+    #add-mappings: true
+    #资源映射地址为classpath:/content/
+    static-locations: classpath:/static/ #静态资源的目录
+  mvc:
+    #出现错误时, 直接抛出异常
+    throw-exception-if-no-handler-found: true
+    date-format: yyyy-MM-dd HH:mm:ss #日期格式
+    #资源映射路径为/content/**
+    #static-path-pattern: /content
+

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>王者荣耀游戏数据搜索引擎</title>
+
+    <link rel="stylesheet" href="js/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="js/bootstrap/css/bootstrap-theme.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap/js/bootstrap.js"></script>
+</head>
+<script>
+
+
+    var searchType = "Janus";
+    function setType(type) {
+        console.log(type);
+        $("#typeBtn").html(type+"<span class=\"caret\"></span>");
+        searchType = type;
+    }
+
+    function search() {
+        var content = $("#searchContent").val();
+        switch (searchType) {
+            case "Janus":
+                JanusSearch(content);
+                break;
+            case "graphDB":
+                graphDBSearch(content);
+                break;
+            case "rdfDB":
+                rdfDBSearch(content);
+                break;
+            default:
+                break;
+        }
+    }
+
+    function searchWithContent(content) {
+        $("#searchContent").val(content);
+        switch (searchType) {
+            case "Janus":
+                JanusSearch(content);
+                break;
+            case "graphDB":
+                graphDBSearch(content);
+                break;
+            case "rdfDB":
+                rdfDBSearch(content);
+                break;
+            default:
+                break;
+        }
+    }
+
+    function rdfDBSearch(content) {
+        
+    }
+
+    function JanusSearch(content) {
+        if(content==("所有英雄")){
+            $.ajax({
+                type:"POST",
+                contentType:"application/json",
+                dataType:"json",
+                url:"data", //访问的链接
+                data:JSON.stringify({"gremlin":"g.V().has('type','hero').values('name')"}),
+                success:function(data){  //成功的回调函数
+                    var html = "";
+                    for(var dataOne in data.result.data.value ){
+                        if(html.length!=0){
+                            html+="<div class=\"row show-grid\" style='height: 1px;background: black'></div>";
+                        }
+                        dataOne = data.result.data.value[dataOne];
+                        html = html+"<div class=\"row show-grid\">"+
+                            "<div class=\"col-md-4\">" + dataOne;
+                        html+="<a href='javaScript:searchWithContent(\""+dataOne+"\")'><img src='heroImg/"+dataOne+".jpg'></a></div>";
+                        html+="</div>";
+                    }if(html==""){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }else{
+                        $("#searchResult").html(html);
+                    }
+                },
+                error: function (e) {
+                    console.log(e)
+                    alert("error");
+                }
+            });
+        }else if(content==("所有装备")){
+            $.ajax({
+                type:"POST",
+                contentType:"application/json",
+                dataType:"json",
+                url:"data", //访问的链接
+                data:JSON.stringify({"gremlin":"g.V().has('type','equip').values('name')"}),
+                success:function(data){  //成功的回调函数
+                    var html = "";
+                    for(var dataOne in data.result.data.value ){
+                        if(html.length!=0){
+                            html+="<div class=\"row show-grid\" style='height: 1px;background: black'></div>";
+                        }
+                        dataOne = data.result.data.value[dataOne];
+                        html = html+"<div class=\"row show-grid\">"+
+                            "<div class=\"col-md-4\">" + dataOne;
+                        html+="<a href='javaScript:searchWithContent(\""+dataOne+"\")'><img src='zhuangbei/"+dataOne+".jpg'></a></div>";
+                        html+="</div>";
+                    }
+                    if(html==""){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }else{
+                        $("#searchResult").html(html);
+                    }
+                },
+                error: function (e) {
+                    console.log(e)
+                    alert("error");
+                }
+            });
+        }
+        else if(content.indexOf("的技能")!=-1){
+            var heroName = content.substring(0,content.indexOf("的技能"));
+            $.ajax({
+                type:"POST",
+                contentType:"application/json",
+                dataType:"json",
+                url:"data", //访问的链接
+                data:JSON.stringify({"gremlin":"g.V().has('name','"+heroName+"').out('has')"}),  //Jquery生成验证参数的名称
+                success:function(data){  //成功的回调函数
+                    solveData(data);
+
+                },
+                error: function (e) {
+                    console.log(e)
+                    alert("error");
+                }
+            });
+
+        }else if(content.indexOf("的推荐出装")!=-1){
+            var heroName = content.substring(0,content.indexOf("的推荐出装"));
+            $.ajax({
+                type:"POST",
+                contentType:"application/json",
+                dataType:"json",
+                url:"data", //访问的链接
+                data:JSON.stringify({"gremlin":"g.V().has('name','"+heroName+"').out('fit')"}),  //Jquery生成验证参数的名称
+                success:function(data){  //成功的回调函数
+                    solveData(data);
+
+                },
+                error: function (e) {
+                    console.log(e)
+                    alert("error");
+                }
+            });
+
+        }else if(content.indexOf("的最佳拍档")!=-1){
+            var heroName = content.substring(0,content.indexOf("的最佳拍档"));
+            $.ajax({
+                type:"POST",
+                contentType:"application/json",
+                dataType:"json",
+                url:"data", //访问的链接
+                data:JSON.stringify({"gremlin":"g.V().has('name','"+heroName+"').out('最佳拍档').values('name')"}),
+                success:function(data){  //成功的回调函数
+                    if(data=={}){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }
+                    var html = "";
+                    for(var dataOne in data.result.data.value ){
+                        if(html.length!=0){
+                            html+="<div class=\"row show-grid\" style='height: 1px;background: black'></div>";
+                        }
+                        dataOne = data.result.data.value[dataOne];
+                        html = html+"<div class=\"row show-grid\">"+
+                            "<div class=\"col-md-4\">" + dataOne;
+                        html+="<a href='javaScript:searchWithContent(\""+dataOne+"\")'><img src='heroImg/"+dataOne+".jpg'></a></div>";
+                        html+="</div>";
+                    }
+                    if(html==""){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }else{
+                        $("#searchResult").html(html);
+                    }
+                },
+                error: function (e) {
+                    console.log(e)
+                    alert("error");
+                }
+            });
+
+        }else if(content.indexOf("的被压制英雄")!=-1){
+            var heroName = content.substring(0,content.indexOf("的被压制英雄"));
+            $.ajax({
+                type:"POST",
+                contentType:"application/json",
+                dataType:"json",
+                url:"data", //访问的链接
+                data:JSON.stringify({"gremlin":"g.V().has('name','"+heroName+"').out('被压制英雄').values('name')"}),
+                success:function(data){  //成功的回调函数
+                    if(data=={}){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }
+                    var html = "";
+                    console.log(data)
+                    for(var dataOne in data.result.data.value ){
+                        if(html.length!=0){
+                            html+="<div class=\"row show-grid\" style='height: 1px;background: black'></div>";
+                        }
+                        dataOne = data.result.data.value[dataOne];
+                        html = html+"<div class=\"row show-grid\">"+
+                            "<div class=\"col-md-4\">" + dataOne;
+                        html+="<a href='javaScript:searchWithContent(\""+dataOne+"\")'><img src='heroImg/"+dataOne+".jpg'></a></div>";
+                        html+="</div>";
+                    }
+                    if(html==""){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }else{
+                        $("#searchResult").html(html);
+                    }
+                },
+                error: function (e) {
+                    console.log(e)
+                    alert("error");
+                }
+            });
+
+        }
+        else if(content.indexOf("的压制英雄")!=-1){
+            var heroName = content.substring(0,content.indexOf("的压制英雄"));
+            $.ajax({
+                type:"POST",
+                contentType:"application/json",
+                dataType:"json",
+                url:"data", //访问的链接
+                data:JSON.stringify({"gremlin":"g.V().has('name','"+heroName+"').out('压制英雄').values('name')"}),
+                success:function(data){  //成功的回调函数
+                    if(data=={}){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }
+                    var html = "";
+                    for(var dataOne in data.result.data.value ){
+                        if(html.length!=0){
+                            html+="<div class=\"row show-grid\" style='height: 1px;background: black'></div>";
+                        }
+                        dataOne = data.result.data.value[dataOne];
+                        html = html+"<div class=\"row show-grid\">"+
+                            "<div class=\"col-md-4\">" + dataOne;
+                        html+="<a href='javaScript:searchWithContent(\""+dataOne+"\")'><img src='heroImg/"+dataOne+".jpg'></a></div>";
+                        html+="</div>";
+                    }
+                    if(html==""){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }else{
+                        $("#searchResult").html(html);
+                    }
+                },
+                error: function (e) {
+                    console.log(e)
+                    alert("error");
+                }
+            });
+
+        }
+        else if(content.indexOf("的合成需要")!=-1){
+            var heroName = content.substring(0,content.indexOf("的合成需要"));
+            $.ajax({
+                type:"POST",
+                contentType:"application/json",
+                dataType:"json",
+                url:"data", //访问的链接
+                data:JSON.stringify({"gremlin":"g.V().has('name','"+heroName+"').in('need').values('name')"}),
+                success:function(data){  //成功的回调函数
+                    if(data=={}){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }
+                    var html = "";
+                    for(var dataOne in data.result.data.value ){
+                        if(html.length!=0){
+                            html+="<div class=\"row show-grid\" style='height: 1px;background: black'></div>";
+                        }
+                        dataOne = data.result.data.value[dataOne];
+                        html = html+"<div class=\"row show-grid\">"+
+                            "<div class=\"col-md-4\">" + dataOne;
+                        html+="<a href='javaScript:searchWithContent(\""+dataOne+"\")'><img src='zhuangbei/"+dataOne+".jpg'></a></div>";
+                        html+="</div>";
+                    }
+                    if(html==""){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }else{
+                        $("#searchResult").html(html);
+                    }
+                },
+                error: function (e) {
+                    console.log(e)
+                    alert("error");
+                }
+            });
+
+        }
+
+        else if(content.indexOf("可以合成")!=-1){
+            var heroName = content.substring(0,content.indexOf("可以合成"));
+            $.ajax({
+                type:"POST",
+                contentType:"application/json",
+                dataType:"json",
+                url:"data", //访问的链接
+                data:JSON.stringify({"gremlin":"g.V().has('name','"+heroName+"').out('need').values('name')"}),
+                success:function(data){  //成功的回调函数
+                    if(data=={}){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }
+                    var html = "";
+                    for(var dataOne in data.result.data.value ){
+                        if(html.length!=0){
+                            html+="<div class=\"row show-grid\" style='height: 1px;background: black'></div>";
+                        }
+                        dataOne = data.result.data.value[dataOne];
+                        html = html+"<div class=\"row show-grid\">"+
+                            "<div class=\"col-md-4\">" + dataOne;
+                        html+="<a href='javaScript:searchWithContent(\""+dataOne+"\")'><img src='zhuangbei/"+dataOne+".jpg'></a></div>";
+                        html+="</div>";
+                    }
+                    if(html==""){
+                        $("#searchResult").empty();
+                        $("#searchResult").text("无结果");
+                    }else{
+                        $("#searchResult").html(html);
+                    }
+                },
+                error: function (e) {
+                    console.log(e)
+                    alert("error");
+                }
+            });
+
+        }
+        else if(content.indexOf("的")!=-1){
+            var heroName = content.substring(0,content.indexOf("的"));
+            var sourceName = content.substring(content.indexOf("的")+1,content.length);
+
+            $.ajax({
+                type:"POST",
+                contentType:"application/json",
+                dataType:"json",
+                url:"data", //访问的链接
+                data:JSON.stringify({"gremlin":"g.V().has('name','"+heroName+"').values('"+sourceName+"')"}),  //Jquery生成验证参数的名称
+                success:function(data){  //成功的回调函数
+                    $("#searchResult").empty();
+                    if(data.result.data.value[0].value!=undefined){
+                        $("#searchResult").text(data.result.data.value[0].value);
+                    }else{
+                        $("#searchResult").text(data.result.data.value[0]);
+                    }
+
+                },
+                error: function (e) {
+                    console.log(e)
+                    alert("error");
+                }
+            });
+        }else{
+            $.ajax({
+                type:"POST",
+                contentType:"application/json",
+                dataType:"json",
+                url:"data", //访问的链接
+                data:JSON.stringify({"gremlin":"g.V().has('name','"+content+"')"}),  //Jquery生成验证参数的名称
+                success:function(data){  //成功的回调函数
+                    console.log(data)
+                    solveData(data);
+                },
+                error: function (e) {
+                    console.log(e)
+                    alert("error");
+                }
+            });
+
+        }
+    }
+
+    function graphDBSearch(content) {
+
+    }
+    function solveData(data) {
+        if(data=={}){
+            $("#searchResult").empty();
+            $("#searchResult").text("无结果");
+        }
+        var html = "";
+        for(var dataOne in data.result.data.value ){
+            if(html.length!=0){
+                html+="<div class=\"row show-grid\" style='height: 1px;background: black'></div>";
+            }
+            dataOne = data.result.data.value[dataOne];
+            var name = dataOne.value.properties.name[0].value.value;
+            html = html+"<div class=\"row show-grid\">"+
+                "<div class=\"col-md-4\">" + name;
+            if(dataOne.value.properties.type[0].value.value=="hero"){
+                html+="<a href='javaScript:searchWithContent(\""+name+"\")'><img src='heroImg/"+name+".jpg'></a></div>";
+            }else if(dataOne.value.properties.type[0].value.value=="equip"){
+                html+="<a href='javaScript:searchWithContent(\""+name+"\")'><img src='zhuangbei/"+name+".jpg'></a></div>";
+            }else{
+                html+="</div>";
+            }
+            html+= "<div class=\"col-md-8\">";
+            for(var key in dataOne.value.properties ) {
+                if(key!="img"&&key!="name"&&key!="type"){
+                    if(dataOne.value.properties[key][0].value.value.value!=undefined){
+                        html+="<span>"+key+":"+dataOne.value.properties[key][0].value.value.value+"</span><br>"
+                    }else{
+                        html+="<span>"+key+":"+dataOne.value.properties[key][0].value.value+"</span><br>"
+                    }
+                }
+            }
+            html+="</div></div>";
+        }
+        if(html==""){
+            $("#searchResult").empty();
+            $("#searchResult").text("无结果");
+        }else{
+            $("#searchResult").html(html);
+        }
+    }
+</script>
+<style>
+    img{
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<body>
+
+<div  class="row" style="margin-left: 50px;margin-right: 50px">
+    <div class="input-group input-group-lg" style="width: 600px;padding: 20px">
+        <input id="searchContent" type="text"  class="form-control">
+        <!--<div class="input-group-btn">-->
+            <!--<button id="typeBtn" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">-->
+                <!--Janus <span class="caret"></span>-->
+            <!--</button>-->
+            <!--<ul class="dropdown-menu pull-right">-->
+                <!--<li>-->
+                    <!--<a href="javascript:setType('Janus')">Janus</a>-->
+                <!--</li>-->
+                <!--<li>-->
+                    <!--<a href="javascript:setType('graphDB')">graphDB</a>-->
+                <!--</li>-->
+                <!--<li>-->
+                    <!--<a href="javascript:setType('rdfDB')">rdfDB</a>-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+        <span class="input-group-btn">
+             <button class="btn btn-default" id="doSearch" type="button" onclick="search()">搜索</button>
+        </span>
+    </div>
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">结果</div>
+            <div class="panel-body" id="searchResult">
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
