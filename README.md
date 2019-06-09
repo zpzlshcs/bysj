@@ -1,5 +1,5 @@
 # bysj
-本系统为毕业设计的相关文档，通过搭建Janusgraph后建立一个王者荣耀游戏数据搜索引擎
+本系统为毕业设计的相关软件，通过搭建Janusgraph后建立一个王者荣耀游戏数据搜索引擎
 gamesearch是搜索引擎Web服务，使用SpringBoot作为底层框架，前端使用Bootstrap+Vue.js+jQuery+d3.js
 janusdata是java爬虫程序
 
