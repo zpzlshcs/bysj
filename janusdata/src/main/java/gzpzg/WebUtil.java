@@ -86,7 +86,7 @@ public class WebUtil {
                     "('type', '"+typeName+"', 'name', '"+equipName+"'" +shuxingStr.toString()+
                     ")\"}";
             System.out.println(jsonData);
-            httpUtil.post("http:\\\\106.14.5.35:8182",jsonData);
+            httpUtil.post("http:\\\\自己的服务器ip:8182",jsonData);
             //System.out.println("装备名称："+equipName+"，装备属性："+gson.toJson(hashMap));
         }
 
@@ -116,7 +116,7 @@ public class WebUtil {
                         ".addE('need').from(g.V().has('name','"+iterator.next().text()+"'))\"" +
                         "}";
                 System.out.println(json);
-                httpUtil.post("http:\\\\106.14.5.35:8182",json);
+                httpUtil.post("http:\\\\自己的服务器ip:8182",json);
             }
         }
     }
@@ -230,7 +230,7 @@ public class WebUtil {
                     "('type', '"+typeName+"', 'name', '"+heroName+"'" +shuxingStr.toString()+
                     ")\"}";
             System.out.println(jsonData);
-            httpUtil.post("http:\\\\106.14.5.35:8182",jsonData);
+            httpUtil.post("http:\\\\自己的服务器ip:8182",jsonData);
 
             String skillTypename = "skill";//技能节点的type
             Element skillshuju = document1.getElementById("hero_skill");
@@ -260,13 +260,13 @@ public class WebUtil {
                         "('type', '"+skillTypename+"', 'name', '"+skillName+"','skillType','"+skillType+"','skillDesc','"+skillDesc +"'"+
                         ")\"}";//添加技能节点
                 System.out.println(skillJsonData);
-                httpUtil.post("http:\\\\106.14.5.35:8182",skillJsonData);
+                httpUtil.post("http:\\\\自己的服务器ip:8182",skillJsonData);
                 String skillConnJson = "{" +
                         "\"gremlin\":\"g.V().has('name','"+heroName+"')" +
                         ".addE('has').to(g.V().has('type','"+skillTypename+"').has('name','"+skillName+"'))\"" +
                         "}";
                 System.out.println(skillConnJson);
-                httpUtil.post("http:\\\\106.14.5.35:8182",skillConnJson);
+                httpUtil.post("http:\\\\自己的服务器ip:8182",skillConnJson);
             }
 
             Set<String> zhuangbeiSet = new HashSet<>();//适合的装备名称
@@ -280,7 +280,7 @@ public class WebUtil {
                         "\"gremlin\":\"g.V().has('type','"+typeName+"').has('name','"+heroName+"')" +
                         ".addE('fit').to(g.V().has('type','equip').has('name','"+s+"'))\"" +
                         "}";
-                httpUtil.post("http:\\\\106.14.5.35:8182",zbConnJson);
+                httpUtil.post("http:\\\\自己的服务器ip:8182",zbConnJson);
                 System.out.println(zbConnJson);
             }
 
@@ -296,7 +296,7 @@ public class WebUtil {
                             ".addE('"+heroConnName+"').to(g.V().has('name','"+heros.get(i).text().trim()+"'))\"" +
                             "}";
                     System.out.println(heroConnJson);
-                    httpUtil.post("http:\\\\106.14.5.35:8182",heroConnJson);
+                    httpUtil.post("http:\\\\自己的服务器ip:8182",heroConnJson);
                 }
             }
     }

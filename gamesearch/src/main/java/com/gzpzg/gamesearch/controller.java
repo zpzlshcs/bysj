@@ -27,7 +27,7 @@ public class controller {
         if(data==null||data.getGremlin()==null){
             return "{}";
         }
-        String result = httpUtil.post("http://106.14.5.35:8182","{\"gremlin\":\""+data.getGremlin()+"\"}");
+        String result = httpUtil.post("http://自己的服务器ip:8182","{\"gremlin\":\""+data.getGremlin()+"\"}");
         result = removeStr(result);
         return result;
     }
@@ -48,7 +48,7 @@ public class controller {
         if(name==null){
             throw new Exception("异常");
         }
-        String result = httpUtil.post("http://106.14.5.35:8182","{\"gremlin\":\"g.V().has('name','"+name+"')\"}");
+        String result = httpUtil.post("http://自己的服务器ip:8182","{\"gremlin\":\"g.V().has('name','"+name+"')\"}");
         result = removeStr(result);
         VertexData data = objectMapper.readValue(result,VertexData.class);
         if(data.getStatus().getCode()==200&&data.getResult().getData().getValue().size()!=0){
@@ -143,9 +143,9 @@ public class controller {
     public void solveEdge(String id,String edgeName,String edgeShowName,Map<String,Object> resultData,List<NodeData> nodeDatas,List<NodeData> relationship,boolean isOut,int time) throws IOException {
         String result = null;
         if(isOut){
-            result = httpUtil.post("http://106.14.5.35:8182","{\"gremlin\":\"g.V("+id+").out('"+edgeName+"')\"}");
+            result = httpUtil.post("http://自己的服务器ip:8182","{\"gremlin\":\"g.V("+id+").out('"+edgeName+"')\"}");
         }else{
-            result = httpUtil.post("http://106.14.5.35:8182","{\"gremlin\":\"g.V("+id+").in('"+edgeName+"')\"}");
+            result = httpUtil.post("http://自己的服务器ip:8182","{\"gremlin\":\"g.V("+id+").in('"+edgeName+"')\"}");
         }
         result = removeStr(result);
         VertexData vrtexData = objectMapper.readValue(result,VertexData.class);
@@ -163,7 +163,7 @@ public class controller {
         if(type==null){
             throw new Exception("异常");
         }
-        String result = httpUtil.post("http://106.14.5.35:8182","{\"gremlin\":\"g.V().has('type','"+type+"')\"}");
+        String result = httpUtil.post("http://自己的服务器ip:8182","{\"gremlin\":\"g.V().has('type','"+type+"')\"}");
         result = removeStr(result);
         VertexData data = objectMapper.readValue(result,VertexData.class);
         if(data.getStatus().getCode()==200&&data.getResult().getData().getValue().size()!=0){
@@ -234,9 +234,9 @@ public class controller {
     public void solveEdge2(String id,String edgeName,String edgeShowName,Map<String,Object> resultData,List<NodeData> nodeDatas,List<NodeData> relationship,boolean isOut,String type) throws IOException {
         String result = null;
         if(isOut){
-            result = httpUtil.post("http://106.14.5.35:8182","{\"gremlin\":\"g.V("+id+").out('"+edgeName+"')\"}");
+            result = httpUtil.post("http://自己的服务器ip:8182","{\"gremlin\":\"g.V("+id+").out('"+edgeName+"')\"}");
         }else{
-            result = httpUtil.post("http://106.14.5.35:8182","{\"gremlin\":\"g.V("+id+").in('"+edgeName+"')\"}");
+            result = httpUtil.post("http://自己的服务器ip:8182","{\"gremlin\":\"g.V("+id+").in('"+edgeName+"')\"}");
         }
         result = removeStr(result);
         VertexData vrtexData = objectMapper.readValue(result,VertexData.class);
